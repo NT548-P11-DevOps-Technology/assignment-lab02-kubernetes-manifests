@@ -4,14 +4,13 @@ metadata:
   name: auth-service-mysql-pv
 spec:
   capacity:
-    storage: 5Gi
+    storage: 20Gi
   accessModes:
     - ReadWriteOnce
-  volumeMode: Filesystem
   hostPath:
-    path: "/data/auth-service-mysql"
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: standard
+    path: "/mnt/data"
+  # persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
 
 ---
 apiVersion: v1
@@ -19,8 +18,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: auth-service-mysql-pvc
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 20Gi
