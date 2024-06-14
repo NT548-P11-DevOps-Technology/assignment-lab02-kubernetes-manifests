@@ -1,0 +1,134 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  labels:
+    app: class-management-auth-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: class-management-auth-service
+  template:
+    metadata:
+      labels:
+        app: class-management-auth-service
+    spec:
+      containers:
+        - name: class-management-auth-service-container
+          image: th1enlm02/class-management-auth-service:latest
+          ports:
+            - containerPort: 3077
+          env:
+            - name: BASE_URL_FE
+              value: http://frontend-service:3000
+            - name: AUTH_SERVICE_PORT
+              value: "3077"
+            - name: AUTH_SERVICE_HOST
+              value: auth-service-mysql
+            - name: AUTH_SERVICE_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-service-mysql-configmap
+                  key: dbName
+            - name: AUTH_SERVICE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-mysql-secret
+                  key: username
+            - name: AUTH_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-mysql-secret
+                  key: rootPassword
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment-mysql
+  labels:
+    app: auth-service-mysql
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth-service-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: auth-service-mysql
+    spec:
+      containers:
+        - name: auth-service-mysql-container
+          image: mysql:8.3.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_HOST
+              value: auth-service-mysql
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-service-mysql-configmap
+                  key: dbName
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-mysql-secret
+                  key: username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-mysql-secret
+                  key: password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-mysql-secret
+                  key: rootPassword
+          volumeMounts:
+            - name: auth-service-mysql-data
+              mountPath: /var/lib/mysql
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: auth-service-mysql-data
+          persistentVolumeClaim:
+            claimName: auth-service-mysql-pvc
+        - name: init-sql
+          configMap:
+            name: auth-service-mysql-initdb
+            
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment-phpmyadmin
+  labels:
+    app: auth-phpmyadmin
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth-phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: auth-phpmyadmin
+    spec:
+      containers:
+        - name: auth-phpmyadmin-container
+          image: phpmyadmin:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: PMA_HOST
+              value: auth-service-mysql
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-mysql-secret
+                  key: rootPassword

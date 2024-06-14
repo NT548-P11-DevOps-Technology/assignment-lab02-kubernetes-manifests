@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: class-management-fe-deployment
+  labels:
+    app: class-management-fe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: class-management-fe
+  template:
+    metadata:
+      labels:
+        app: class-management-fe
+    spec:
+      containers:
+        - name: class-management-fe-container
+          image: th1enlm02/class-management-fe:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_BASE_URL_AUTH
+              value: http://auth-service:3077
+            - name: REACT_APP_BASE_URL_STUDENT
+              value: http://student-service:8080
+            - name: REACT_APP_BASE_URL_LECTURER
+              value: http://lecturer-service:5000
+            - name: REACT_APP_BASE_URL_CLASS
+              value: http://class-service:8000

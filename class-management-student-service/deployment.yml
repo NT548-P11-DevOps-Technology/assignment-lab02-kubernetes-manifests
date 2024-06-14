@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-deployment
+  labels:
+    app: class-management-student-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: class-management-student-service
+  template:
+    metadata:
+      labels:
+        app: class-management-student-service
+    spec:
+      containers:
+        - name: class-management-student-service-container
+          image: th1enlm02/class-management-student-service:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://student-service-mysql:3306/student_service
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: student-service-secret
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: student-service-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-deployment-mysql
+  labels:
+    app: student-service-mysql
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: student-service-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: student-service-mysql
+    spec:
+      containers:
+        - name: student-service-mysql-container
+          image: mysql:8.3.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_HOST
+              value: student-service-mysql
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: student-service-mysql-configmap
+                  key: dbName
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: student-service-mysql-secret
+                  key: username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: student-service-mysql-secret
+                  key: password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: student-service-mysql-secret
+                  key: rootPassword
+          volumeMounts:
+            - name: student-service-mysql-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: student-service-mysql-data
+          persistentVolumeClaim:
+            claimName: student-service-mysql-pvc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-deployment-phpmyadmin
+  labels:
+    app: student-phpmyadmin
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: student-phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: student-phpmyadmin
+    spec:
+      containers:
+        - name: student-phpmyadmin-container
+          image: phpmyadmin:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: PMA_HOST
+              value: student-service-mysql
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: student-service-mysql-secret
+                  key: rootPassword
