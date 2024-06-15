@@ -62,10 +62,6 @@ spec:
       labels:
         app: auth-service-mysql
     spec:
-      initContainers:
-        - name: wait-for-mysql
-          image: busybox
-          command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: auth-service-mysql-container
           image: mysql:8.3.0
@@ -120,6 +116,7 @@ spec:
               mountPath: /var/lib/mysql
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
+              subPath: init.sql
       volumes:
         - name: auth-service-mysql-data
           persistentVolumeClaim:
@@ -127,9 +124,6 @@ spec:
         - name: initdb
           configMap:
             name: auth-mysql-initdb
-            items:
-              - key: init.sql
-                path: init.sql
 ---
 apiVersion: apps/v1
 kind: Deployment
