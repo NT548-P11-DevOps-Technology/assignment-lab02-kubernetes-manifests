@@ -96,6 +96,18 @@ spec:
                 secretKeyRef:
                   name: auth-mysql-secret
                   key: rootPassword
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3077
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 3077
+            initialDelaySeconds: 5
+            periodSeconds: 10
           volumeMounts:
             - name: auth-service-mysql-data
               mountPath: /var/lib/mysql
