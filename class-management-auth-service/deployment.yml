@@ -92,7 +92,10 @@ spec:
             #       name: auth-mysql-secret
             #       key: password
             - name: MYSQL_ROOT_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: auth-mysql-secret
+                  key: rootPassword
           volumeMounts:
             - name: auth-service-mysql-data
               mountPath: /var/lib/mysql

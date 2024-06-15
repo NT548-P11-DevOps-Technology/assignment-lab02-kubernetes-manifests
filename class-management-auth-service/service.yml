@@ -5,11 +5,12 @@ metadata:
 spec:
   selector:
     app: class-management-auth-service
-  type: ClusterIP
+  type: NodePort
   ports:
     - protocol: TCP
       port: 3077
       targetPort: 3077
+      nodePort: 30377
 
 ---
 apiVersion: v1
