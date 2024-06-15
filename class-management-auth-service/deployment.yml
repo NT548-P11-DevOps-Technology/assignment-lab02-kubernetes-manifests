@@ -116,6 +116,24 @@ spec:
               mountPath: /var/lib/mysql
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
+      initContainers:
+        - name: init-mysql
+          image: mysql:8.3.0
+          command:
+            - bash
+            - "-c"
+            - |
+              echo "Executing init.sql..."
+              mysql -h auth-service-mysql -u root -p"${MYSQL_ROOT_PASSWORD}" < /docker-entrypoint-initdb.d/init.sql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-mysql-secret
+                  key: rootPassword
+          volumeMounts:
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: auth-service-mysql-data
           persistentVolumeClaim:
