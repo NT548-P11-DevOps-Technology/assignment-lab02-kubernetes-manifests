@@ -62,10 +62,6 @@ spec:
       labels:
         app: auth-service-mysql
     spec:
-      # initContainers:
-      #   - name: wait-for-mysql
-      #     image: busybox
-      #     command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql-container 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: auth-service-mysql-container
           image: mysql:8.3.0
@@ -76,6 +72,17 @@ spec:
           #   limits:
           #     cpu: 100m
           #     memory: 1Gi
+          command:
+            - bash
+            - "-c"
+            - |
+              until mysql -h auth-service-mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1"; do
+                echo "Waiting for MySQL to start..."
+                sleep 5
+              done
+              mysql -h auth-service-mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS auth_service;"
+              mysql -h auth-service-mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS 'th1enlm02'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+              mysql -h auth-service-mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON auth_service.* TO 'th1enlm02'@'%';"
           ports:
             - containerPort: 3306
           env:
