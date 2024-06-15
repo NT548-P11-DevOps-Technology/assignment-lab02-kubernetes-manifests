@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: default
 resources:
-  - class-management-fe
+  # - class-management-fe
   - class-management-auth-service
   # - class-management-student-service
-  - class-management-lecturer-service
+  # - class-management-lecturer-service
   # - class-management-class-service

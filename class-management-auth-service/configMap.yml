@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: auth-service-mysql-configmap
+  name: auth-mysql-configmap
 data:
   dbName: auth_service
 
@@ -10,7 +10,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: auth-service-mysql-initdb
+  name: auth-mysql-initdb
 data:
   init.sql: |
     USE auth_service;

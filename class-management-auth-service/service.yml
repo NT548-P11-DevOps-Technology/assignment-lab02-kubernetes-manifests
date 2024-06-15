@@ -22,15 +22,16 @@ spec:
   ports:
     - port: 3305
       targetPort: 3306
-
+  clusterIP: None
+  
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-phpmyadmin
+  name: auth-service-phpmyadmin
 spec:
   selector:
-    app: auth-phpmyadmin
+    app: auth-service-phpmyadmin
   type: NodePort
   ports:
     - protocol: TCP

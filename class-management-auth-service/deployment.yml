@@ -5,7 +5,7 @@ metadata:
   labels:
     app: class-management-auth-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: class-management-auth-service
@@ -17,13 +17,6 @@ spec:
       containers:
         - name: class-management-auth-service-container
           image: th1enlm02/class-management-auth-service:latest
-          resources:
-            requests:
-              cpu: 5m
-              memory: 50Mi
-            limits:
-              cpu: 100m
-              memory: 1Gi
           ports:
             - containerPort: 3077
           env:
@@ -36,28 +29,28 @@ spec:
             - name: AUTH_SERVICE_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: auth-service-mysql-configmap
+                  name: auth-mysql-configmap
                   key: dbName
             - name: AUTH_SERVICE_USER
               valueFrom:
                 secretKeyRef:
-                  name: auth-service-mysql-secret
+                  name: auth-mysql-secret
                   key: username
             - name: AUTH_SERVICE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: auth-service-mysql-secret
+                  name: auth-mysql-secret
                   key: rootPassword
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-deployment-mysql
+  name: auth-mysql-deployment
   labels:
     app: auth-service-mysql
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: auth-service-mysql
@@ -70,39 +63,36 @@ spec:
     spec:
       containers:
         - name: auth-service-mysql-container
-          image: mysql:8.3.0
-          resources:
-            requests:
-              cpu: 5m
-              memory: 50Mi
-            limits:
-              cpu: 100m
-              memory: 1Gi
+          image: mysql:8.0
+          # resources:
+          #   requests:
+          #     cpu: 5m
+          #     memory: 50Mi
+          #   limits:
+          #     cpu: 100m
+          #     memory: 1Gi
           ports:
             - containerPort: 3306
           env:
-            - name: MYSQL_HOST
-              value: auth-service-mysql
-            - name: MYSQL_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-service-mysql-configmap
-                  key: dbName
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: auth-service-mysql-secret
-                  key: username
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: auth-service-mysql-secret
-                  key: password
+            # - name: MYSQL_HOST
+            #   value: auth-service-mysql
+            # - name: MYSQL_DATABASE
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: auth-mysql-configmap
+            #       key: dbName
+            # - name: MYSQL_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: auth-mysql-secret
+            #       key: username
+            # - name: MYSQL_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: auth-mysql-secret
+            #       key: password
             - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: auth-service-mysql-secret
-                  key: rootPassword
+              value: root
           volumeMounts:
             - name: auth-service-mysql-data
               mountPath: /var/lib/mysql
@@ -111,10 +101,10 @@ spec:
       volumes:
         - name: auth-service-mysql-data
           persistentVolumeClaim:
-            claimName: auth-service-mysql-pvc
+            claimName: auth-mysql-pvc
         - name: init-sql
           configMap:
-            name: auth-service-mysql-initdb
+            name: auth-mysql-initdb
             
 ---
 apiVersion: apps/v1
@@ -122,16 +112,16 @@ kind: Deployment
 metadata:
   name: auth-deployment-phpmyadmin
   labels:
-    app: auth-phpmyadmin
+    app: auth-service-phpmyadmin
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: auth-phpmyadmin
+      app: auth-service-phpmyadmin
   template:
     metadata:
       labels:
-        app: auth-phpmyadmin
+        app: auth-service-phpmyadmin
     spec:
       containers:
         - name: auth-phpmyadmin-container
@@ -141,8 +131,10 @@ spec:
           env:
             - name: PMA_HOST
               value: auth-service-mysql
+            - name: PMA_PORT
+              value: "3306"
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: auth-service-mysql-secret
+                  name: auth-mysql-secret
                   key: rootPassword
