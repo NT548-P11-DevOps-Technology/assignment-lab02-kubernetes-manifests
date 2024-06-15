@@ -32,10 +32,7 @@ spec:
                   name: auth-mysql-configmap
                   key: dbName
             - name: AUTH_SERVICE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: auth-mysql-secret
-                  key: username
+              value: "root"
             - name: AUTH_SERVICE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -61,6 +58,10 @@ spec:
       labels:
         app: auth-service-mysql
     spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: auth-service-mysql-container
           image: mysql:8.0
@@ -97,15 +98,17 @@ spec:
                   name: auth-mysql-secret
                   key: rootPassword
           livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 3077
+            exec:
+              command:
+              - mysqladmin
+              - ping
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 3077
+            exec:
+              command:
+              - mysqladmin
+              - ping
             initialDelaySeconds: 5
             periodSeconds: 10
           volumeMounts:
