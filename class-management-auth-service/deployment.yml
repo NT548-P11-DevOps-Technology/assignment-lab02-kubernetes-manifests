@@ -116,6 +116,10 @@ spec:
               mountPath: /var/lib/mysql
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 10 && mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD < /docker-entrypoint-initdb.d/init.sql"]
       volumes:
         - name: auth-service-mysql-data
           persistentVolumeClaim:
@@ -123,24 +127,6 @@ spec:
         - name: initdb
           configMap:
             name: auth-mysql-initdb
-      initContainers:
-        - name: init-mysql
-          image: mysql:8.3.0
-          command:
-            - "/bin/bash"
-            - "-c"
-            - |
-              echo "Running MySQL init script..."
-              mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" < /docker-entrypoint-initdb.d/init.sql
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: auth-mysql-secret
-                  key: rootPassword
-          volumeMounts:
-            - name: initdb
-              mountPath: /docker-entrypoint-initdb.d
 ---
 apiVersion: apps/v1
 kind: Deployment
