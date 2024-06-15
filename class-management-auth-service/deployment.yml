@@ -14,6 +14,10 @@ spec:
       labels:
         app: class-management-auth-service
     spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: class-management-auth-service-container
           image: th1enlm02/class-management-auth-service:latest
@@ -58,10 +62,6 @@ spec:
       labels:
         app: auth-service-mysql
     spec:
-      initContainers:
-        - name: wait-for-mysql
-          image: busybox
-          command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: auth-service-mysql-container
           image: mysql:8.0
