@@ -116,7 +116,6 @@ spec:
               mountPath: /var/lib/mysql
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
-              subPath: init.sql
       volumes:
         - name: auth-service-mysql-data
           persistentVolumeClaim:
