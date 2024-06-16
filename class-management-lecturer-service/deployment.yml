@@ -69,7 +69,7 @@ spec:
           livenessProbe:
             exec:
               command:
-                - mongo
+                - mongosh
                 - --disableImplicitSessions
                 - --eval
                 - "db.adminCommand('ping')"
@@ -81,7 +81,7 @@ spec:
           readinessProbe:
             exec:
               command:
-                - mongo
+                - mongosh
                 - --disableImplicitSessions
                 - --eval
                 - "db.adminCommand('ping')"
