@@ -12,3 +12,14 @@ metadata:
   name: student-mysql-configmap
 data:
   dbName: student_service
+
+## Init database script
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: student-mysql-initdb
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS student_service;
+    USE student_service;

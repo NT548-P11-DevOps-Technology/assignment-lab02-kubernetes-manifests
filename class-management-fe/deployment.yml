@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: class-management-fe-deployment
+  name: frontend-deployment
   labels:
     app: class-management-fe
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: class-management-fe
@@ -21,10 +21,22 @@ spec:
             - containerPort: 3000
           env:
             - name: REACT_APP_BASE_URL_AUTH
-              value: "http://localhost:3077"
+              valueFrom:
+                configMapKeyRef:
+                  name: base-url-configmap
+                  key: REACT_APP_BASE_URL_AUTH
             - name: REACT_APP_BASE_URL_STUDENT
-              value: "http://student-service:8080"
+              valueFrom:
+                configMapKeyRef:
+                  name: base-url-configmap
+                  key: REACT_APP_BASE_URL_STUDENT
             - name: REACT_APP_BASE_URL_LECTURER
-              value: http://lecturer-service:5000
+              valueFrom:
+                configMapKeyRef:
+                  name: base-url-configmap
+                  key: REACT_APP_BASE_URL_LECTURER
             - name: REACT_APP_BASE_URL_CLASS
-              value: http://class-service:8000
+              valueFrom:
+                configMapKeyRef:
+                  name: base-url-configmap
+                  key: REACT_APP_BASE_URL_CLASS
