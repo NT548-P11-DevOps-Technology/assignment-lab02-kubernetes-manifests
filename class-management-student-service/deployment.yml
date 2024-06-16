@@ -44,7 +44,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: student-deployment-mysql
+  name: student-mysql-deployment
   labels:
     app: student-service-mysql
 spec:
@@ -113,7 +113,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: student-deployment-phpmyadmin
+  name: student-phpmyadmin-deployment
   labels:
     app: student-service-phpmyadmin
 spec:
