@@ -23,6 +23,7 @@ spec:
   ports:
     - port: 3307
       targetPort: 3306
+  clusterIP: None
 
 ---
 apiVersion: v1
