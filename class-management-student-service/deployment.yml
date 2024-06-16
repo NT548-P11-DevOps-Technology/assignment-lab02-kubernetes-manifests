@@ -5,7 +5,7 @@ metadata:
   labels:
     app: class-management-student-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: class-management-student-service
@@ -14,6 +14,10 @@ spec:
       labels:
         app: class-management-student-service
     spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: class-management-student-service-container
           image: th1enlm02/class-management-student-service:latest
@@ -21,16 +25,19 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://student-service-mysql:3306/student_service
+              valueFrom:
+                configMapKeyRef:
+                  name: student-configmap
+                  key: SPRING_DATASOURCE_URL
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: student-service-secret
+                  name: student-secret
                   key: SPRING_DATASOURCE_USERNAME
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: student-service-secret
+                  name: student-secret
                   key: SPRING_DATASOURCE_PASSWORD
 
 ---
@@ -41,7 +48,7 @@ metadata:
   labels:
     app: student-service-mysql
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: student-service-mysql
@@ -63,30 +70,44 @@ spec:
             - name: MYSQL_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: student-service-mysql-configmap
+                  name: student-mysql-configmap
                   key: dbName
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: student-service-mysql-secret
+                  name: student-mysql-secret
                   key: username
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: student-service-mysql-secret
+                  name: student-mysql-secret
                   key: password
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: student-service-mysql-secret
+                  name: student-mysql-secret
                   key: rootPassword
+          livenessProbe:
+            exec:
+              command:
+              - mysqladmin
+              - ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+              - mysqladmin
+              - ping
+            initialDelaySeconds: 5
+            periodSeconds: 10
           volumeMounts:
             - name: student-service-mysql-data
               mountPath: /var/lib/mysql
       volumes:
         - name: student-service-mysql-data
           persistentVolumeClaim:
-            claimName: student-service-mysql-pvc
+            claimName: student-mysql-pvc
 
 ---
 apiVersion: apps/v1
@@ -94,16 +115,16 @@ kind: Deployment
 metadata:
   name: student-deployment-phpmyadmin
   labels:
-    app: student-phpmyadmin
+    app: student-service-phpmyadmin
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: student-phpmyadmin
+      app: student-service-phpmyadmin
   template:
     metadata:
       labels:
-        app: student-phpmyadmin
+        app: student-service-phpmyadmin
     spec:
       containers:
         - name: student-phpmyadmin-container
@@ -113,8 +134,10 @@ spec:
           env:
             - name: PMA_HOST
               value: student-service-mysql
+            - name: PMA_PORT
+              value: "3306"
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: student-service-mysql-secret
+                  name: student-mysql-secret
                   key: rootPassword

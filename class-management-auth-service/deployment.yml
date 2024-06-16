@@ -97,6 +97,8 @@ spec:
                 secretKeyRef:
                   name: auth-mysql-secret
                   key: rootPassword
+          # this is the liveness and readiness probes for the mysql container
+          # it will check if the mysql server is up and running
           livenessProbe:
             exec:
               command:
@@ -116,6 +118,8 @@ spec:
               mountPath: /var/lib/mysql
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
+          # this lifecycle is used to run the init.sql script after the mysql container is up
+          # i found it after a lot of research :D
           lifecycle:
             postStart:
               exec:
