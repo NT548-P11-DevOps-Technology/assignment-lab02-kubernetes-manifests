@@ -53,15 +53,9 @@ spec:
             - containerPort: 27017
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: lecturer-mongodb-secret
-                  key: username
+              value: "root"
             - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: lecturer-mongodb-secret
-                  key: password
+              value: "th1enlm02_root"
           volumeMounts:
             - name: lecturer-service-mongodb-data
               mountPath: /data/db
@@ -103,6 +97,10 @@ spec:
       labels:
         app: lecturer-service-mongo-express
     spec:
+      initContainers:
+        - name: wait-for-mongodb
+          image: busybox
+          command: ['sh', '-c', 'until nc -z -v -w30 lecturer-service-mongodb 27017; do echo "Waiting for MongoDB"; sleep 5; done']
       containers:
         - name: lecturer-service-mongo-express-container
           image: mongo-express:1-20
