@@ -5,5 +5,5 @@ resources:
   # - class-management-fe
   # - class-management-auth-service
   # - class-management-student-service
-  - class-management-lecturer-service
-  # - class-management-class-service
+  # - class-management-lecturer-service
+  - class-management-class-service

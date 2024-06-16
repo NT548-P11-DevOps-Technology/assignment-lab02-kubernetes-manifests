@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: class-service-postgresql-configmap
+  name: class-postgresql-configmap
 data:
   dbName: class_service
 
@@ -9,7 +9,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: class-service-postgresql-initdb
+  name: class-postgresql-initdb
 data:
   init.sql: |
     CREATE TABLE class (

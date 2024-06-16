@@ -5,7 +5,7 @@ metadata:
   labels:
     app: class-management-class-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: class-management-class-service
@@ -25,28 +25,28 @@ spec:
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: class-service-postgresql-configmap
+                  name: class-postgresql-configmap
                   key: dbName
             - name: USER
               valueFrom:
                 secretKeyRef:
-                  name: class-service-postgresql-secret
+                  name: class-postgresql-secret
                   key: username
             - name: PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: class-service-postgresql-secret
+                  name: class-postgresql-secret
                   key: password
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: class-deployment-postgresql
+  name: class-postgresql-deployment
   labels:
     app: class-service-postgresql
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: class-service-postgresql
@@ -66,17 +66,17 @@ spec:
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: class-service-postgresql-configmap
+                  name: class-postgresql-configmap
                   key: dbName
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: class-service-postgresql-secret
+                  name: class-postgresql-secret
                   key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: class-service-postgresql-secret
+                  name: class-postgresql-secret
                   key: password
           volumeMounts:
             - name: class-service-postgresql-data
@@ -89,24 +89,26 @@ spec:
             claimName: postgresql-pvc
         - name: init-sql
           configMap:
-            name: class-service-postgresql-initdb
+            name: class-postgresql-initdb
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: class-deployment-pgadmin
+  name: class-pgadmin-deployment
   labels:
-    app: class-pgadmin
+    app: class-service-pgadmin
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: class-pgadmin
+      app: class-service-pgadmin
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
-        app: class-pgadmin
+        app: class-service-pgadmin
     spec:
       containers:
         - name: class-pgadmin-container
@@ -117,10 +119,10 @@ spec:
             - name: PGADMIN_DEFAULT_EMAIL
               valueFrom:
                 secretKeyRef:
-                  name: class-service-pgadmin-secret
+                  name: class-pgadmin-secret
                   key: email
             - name: PGADMIN_DEFAULT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: class-service-pgadmin-secret
+                  name: class-pgadmin-secret
                   key: password
