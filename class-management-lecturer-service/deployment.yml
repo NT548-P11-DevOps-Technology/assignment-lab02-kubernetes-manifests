@@ -65,6 +65,7 @@ spec:
           volumeMounts:
             - name: lecturer-service-mongodb-data
               mountPath: /data/db
+          args: ["--dbpath","/data/db"]
           livenessProbe:
             exec:
               command:
