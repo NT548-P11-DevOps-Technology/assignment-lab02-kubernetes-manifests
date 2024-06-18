@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: class-management-fe
-  type: NodePort
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 3000
