@@ -6,4 +6,4 @@ data:
   REACT_APP_BASE_URL_AUTH: http://auth-service.default.svc.cluster.local:3077
   REACT_APP_BASE_URL_STUDENT: http://student-service.default.svc.cluster.local:8080
   REACT_APP_BASE_URL_LECTURER: http://lecturer-service.default.svc.cluster.local:5000
-  REACT_APP_BASE_URL_CLASS: http://class-service.default.svc.cluster.local:8000
+  REACT_APP_BASE_URL_CLASS: http://class-service.default.svc.cluster.local:80

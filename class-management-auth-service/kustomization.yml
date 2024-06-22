@@ -6,5 +6,5 @@ resources:
   - persistentVolume.yml
   - deployment.yml
   - service.yml
-  # - ingress.yml
+  - ingress.yml
   

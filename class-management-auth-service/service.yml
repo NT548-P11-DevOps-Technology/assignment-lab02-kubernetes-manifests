@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: class-management-auth-service
-  type: NodePort
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 3077
