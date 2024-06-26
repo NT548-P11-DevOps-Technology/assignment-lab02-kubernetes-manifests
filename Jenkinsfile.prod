@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Deploy to Prod Environment') {
             steps {
-                echo 'Deploying to Stag Environment...'
+                echo 'Deploying to Prod Environment...'
                 sh 'kubectl apply -k .'
             }
         }
@@ -17,16 +17,16 @@ pipeline {
             cleanWs()
         }
         success {
-            echo 'Deployment to Stag Environment is successful!'
+            echo 'Deployment to Prod Environment is successful!'
         }
         failure {
-            echo 'Deployment to Stag Environment failed!'
+            echo 'Deployment to Prod Environment failed!'
         }
         unstable {
-            echo 'Deployment to Stag Environment is unstable!'
+            echo 'Deployment to Prod Environment is unstable!'
         }
         changed {
-            echo 'Deployment to Stag Environment is changed!'
+            echo 'Deployment to Prod Environment is changed!'
         }
     }
 }

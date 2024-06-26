@@ -6,10 +6,8 @@ pipeline {
     stages {
         stage('Deploy to Stag Environment') {
             steps {
-                dir('/home/ubuntu/class-management-k8s-config') {
-                    echo 'Deploying to Stag Environment...'
-                    sh 'kubectl apply -k .'
-                }
+                echo 'Deploying to Stag Environment...'
+                sh 'kubectl apply -k .'
             }
         }
     }
