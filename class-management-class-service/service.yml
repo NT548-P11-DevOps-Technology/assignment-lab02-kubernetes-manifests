@@ -36,6 +36,6 @@ spec:
   type: NodePort
   ports:
     - protocol: TCP
-      port: 8082
+      port: 8008
       targetPort: 80
-      nodePort: 30882
+      nodePort: 30808

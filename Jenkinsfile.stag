@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        label 'stag-agent'
+    }
+
+    stages {
+        stage('Deploy to Stage Environment') {
+            steps {
+                dir('/home/ubuntu/class-management-k8s-config') {
+                    echo 'Deploying to Stag Environment...'
+                    sh 'kubectl apply -k .'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Cleaning...'
+            sh 'docker logout'
+            cleanWs()
+        }
+        success {
+            echo 'Deployment to Stag Environment is successful!'
+        }
+        failure {
+            echo 'Deployment to Stag Environment failed!'
+        }
+        unstable {
+            echo 'Deployment to Stag Environment is unstable!'
+        }
+        changed {
+            echo 'Deployment to Stag Environment is changed!'
+        }
+    }
+}

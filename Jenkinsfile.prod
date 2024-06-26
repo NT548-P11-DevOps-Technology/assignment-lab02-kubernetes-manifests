@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    stages {
+        // stage('Deploy to Stag Environment') {
+        //     steps {
+        //         echo 'Listing all resources in the cluster...'
+        //         sh 'kubectl get all'
+
+        //         echo 'Deploying to Stag Environment...'
+        //         sh 'kubectl apply -k .'
+        //     }
+        // }
+        stage('Deploy to Stage Environment') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8s-token', namespace: 'jenkins', restrictKubeConfigAccess: false, serverUrl: 'https://ec2-52-221-253-100.ap-southeast-1.compute.amazonaws.com:6443') {
+                    echo 'Deploying to Kubernetes...'
+                    sh 'kubectl apply -f secrets.yaml'
+                    sh 'kubectl apply -f configMap.yaml'
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                    echo 'Checking deployment status...'
+                    sh 'kubectl get svc'
+                    sh 'kubectl get pods'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Cleaning...'
+            sh 'docker logout'
+            cleanWs()
+        }
+        success {
+            echo 'Deployment to Stag Environment is successful!'
+        }
+        failure {
+            echo 'Deployment to Stag Environment failed!'
+        }
+        unstable {
+            echo 'Deployment to Stag Environment is unstable!'
+        }
+        changed {
+            echo 'Deployment to Stag Environment is changed!'
+        }
+    }
+}
