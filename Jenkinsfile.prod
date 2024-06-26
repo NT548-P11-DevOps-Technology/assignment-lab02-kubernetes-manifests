@@ -7,7 +7,7 @@ pipeline {
         stage('Deploy to Prod Environment') {
             steps {
                 echo 'Deploying to Prod Environment...'
-                sh 'start kubectl apply -k .'
+                sh 'cmd /c kubectl apply -k .'
             }
         }
     }
