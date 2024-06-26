@@ -4,7 +4,7 @@ pipeline {
     }
 
     stages {
-        stage('Deploy to Stage Environment') {
+        stage('Deploy to Stag Environment') {
             steps {
                 dir('/home/ubuntu/class-management-k8s-config') {
                     echo 'Deploying to Stag Environment...'
@@ -16,7 +16,6 @@ pipeline {
     post {
         always {
             echo 'Cleaning...'
-            sh 'docker logout'
             cleanWs()
         }
         success {
