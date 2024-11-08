@@ -5,7 +5,6 @@ metadata:
 data:
   dbName: auth_service
 
-## Init database script
 ---
 apiVersion: v1
 kind: ConfigMap

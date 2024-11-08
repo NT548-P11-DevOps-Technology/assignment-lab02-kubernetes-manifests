@@ -4,13 +4,13 @@ metadata:
   name: mongodb-pv
 spec:
   capacity:
-    storage: 5Gi
+    storage: 3Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/lecturer-data"
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: manual
+  storageClassName: local-path
 
 ---
 apiVersion: v1
@@ -18,9 +18,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: mongodb-pvc
 spec:
-  storageClassName: manual
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 3Gi

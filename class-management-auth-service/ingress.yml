@@ -2,14 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: auth-service-ingress
-  namespace: default
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - http:
+  - host: auth-api.th1enlm02.live
+    http:
       paths:
-        - path: /auth
+        - path: /
           pathType: Prefix
           backend:
             service:

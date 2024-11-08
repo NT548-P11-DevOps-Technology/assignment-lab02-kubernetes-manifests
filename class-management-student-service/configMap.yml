@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: student-configmap
 data:
-  SPRING_DATASOURCE_URL: jdbc:mysql://student-service-mysql:3306/student_service
+  SPRING_DATASOURCE_URL: jdbc:mysql://student-service-mysql:3307/student_service
 
 ---
 apiVersion: v1

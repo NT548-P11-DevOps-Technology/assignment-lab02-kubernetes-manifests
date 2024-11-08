@@ -5,12 +5,11 @@ metadata:
 spec:
   selector:
     app: class-management-class-service
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 8000
       targetPort: 80
-      nodePort: 30800
 
 ---
 apiVersion: v1
@@ -20,22 +19,7 @@ metadata:
 spec:
   selector:
     app: class-service-postgresql
-  clusterIP: None
+  type: ClusterIP
   ports:
     - port: 5432
       targetPort: 5432
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: class-service-pgadmin
-spec:
-  selector:
-    app: class-service-pgadmin
-  type: NodePort
-  ports:
-    - protocol: TCP
-      port: 8008
-      targetPort: 80
-      nodePort: 30808

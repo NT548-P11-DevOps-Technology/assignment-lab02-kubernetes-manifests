@@ -4,13 +4,13 @@ metadata:
   name: student-mysql-pv
 spec:
   capacity:
-    storage: 5Gi
+    storage: 3Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/student-data"
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: manual
+  storageClassName: local-path
 
 ---
 apiVersion: v1
@@ -18,9 +18,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: student-mysql-pvc
 spec:
-  storageClassName: manual
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 3Gi

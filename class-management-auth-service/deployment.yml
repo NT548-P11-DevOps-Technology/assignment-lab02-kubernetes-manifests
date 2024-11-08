@@ -14,10 +14,10 @@ spec:
       labels:
         app: class-management-auth-service
     spec:
-      initContainers:
-        - name: wait-for-mysql
-          image: busybox
-          command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
+      # initContainers:
+      #   - name: wait-for-mysql
+      #     image: busybox
+      #     command: ['sh', '-c', 'until nc -z -v -w30 auth-service-mysql 3306; do echo "Waiting for MySQL"; sleep 5; done']
       containers:
         - name: class-management-auth-service-container
           image: th1enlm02/class-management-auth-service:latest
@@ -118,8 +118,6 @@ spec:
               mountPath: /var/lib/mysql
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
-          # this lifecycle is used to run the init.sql script after the mysql container is up
-          # i found it after a lot of research :D
           lifecycle:
             postStart:
               exec:
@@ -131,35 +129,3 @@ spec:
         - name: initdb
           configMap:
             name: auth-mysql-initdb
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: auth-phpmyadmin-deployment
-  labels:
-    app: auth-service-phpmyadmin
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: auth-service-phpmyadmin
-  template:
-    metadata:
-      labels:
-        app: auth-service-phpmyadmin
-    spec:
-      containers:
-        - name: auth-phpmyadmin-container
-          image: phpmyadmin:latest
-          ports:
-            - containerPort: 80
-          env:
-            - name: PMA_HOST
-              value: auth-service-mysql
-            - name: PMA_PORT
-              value: "3306"
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: auth-mysql-secret
-                  key: rootPassword

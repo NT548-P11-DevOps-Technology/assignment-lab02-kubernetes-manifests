@@ -79,8 +79,8 @@ spec:
                   name: class-postgresql-secret
                   key: password
           volumeMounts:
-            - name: class-service-postgresql-data
-              mountPath: /var/lib/postgresql/data
+            # - name: class-service-postgresql-data
+            #   mountPath: /var/lib/postgresql/data
             - name: init-sql
               mountPath: /docker-entrypoint-initdb.d
       volumes:
@@ -90,39 +90,3 @@ spec:
         - name: init-sql
           configMap:
             name: class-postgresql-initdb
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: class-pgadmin-deployment
-  labels:
-    app: class-service-pgadmin
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: class-service-pgadmin
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: class-service-pgadmin
-    spec:
-      containers:
-        - name: class-pgadmin-container
-          image: elestio/pgadmin:latest
-          ports:
-            - containerPort: 80
-          env:
-            - name: PGADMIN_DEFAULT_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: class-pgadmin-secret
-                  key: email
-            - name: PGADMIN_DEFAULT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: class-pgadmin-secret
-                  key: password
