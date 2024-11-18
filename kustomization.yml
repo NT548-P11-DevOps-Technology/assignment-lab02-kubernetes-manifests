@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: microservices
+namespace: devops-lab02
 resources:
   - namespace.yml
   - class-management-fe
