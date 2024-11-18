@@ -21,6 +21,7 @@ spec:
       containers:
         - name: class-management-lecturer-service-container
           image: th1enlm02/class-management-lecturer-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
