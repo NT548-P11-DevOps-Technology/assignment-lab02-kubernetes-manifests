@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  labels:
+    name: prometheus-ingress
+  annotations:
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "prometheus-basic-auth"
+spec:
+  rules:
+  - host: prometheus-cluster.th1enlm02.live
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: prometheus-operated
+            port:
+              number: 9090

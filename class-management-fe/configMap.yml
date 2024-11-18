@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: base-url-configmap
 data:
-  REACT_APP_BASE_URL_AUTH: http://auth-api.th1enlm02.live
-  REACT_APP_BASE_URL_STUDENT: http://student-api.th1enlm02.live
-  REACT_APP_BASE_URL_LECTURER: http://lecturer-api.th1enlm02.live
-  REACT_APP_BASE_URL_CLASS: http://class-api.th1enlm02.live
+  REACT_APP_BASE_URL_AUTH: https://auth-api.th1enlm02.live
+  REACT_APP_BASE_URL_STUDENT: https://student-api.th1enlm02.live
+  REACT_APP_BASE_URL_LECTURER: https://lecturer-api.th1enlm02.live
+  REACT_APP_BASE_URL_CLASS: https://class-api.th1enlm02.live

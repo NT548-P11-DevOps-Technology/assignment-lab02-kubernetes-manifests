@@ -17,6 +17,7 @@ spec:
       containers:
         - name: class-management-fe-container
           image: th1enlm02/class-management-fe:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:

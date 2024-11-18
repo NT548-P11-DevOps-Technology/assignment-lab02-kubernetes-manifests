@@ -4,6 +4,7 @@ metadata:
   name: auth-mysql-configmap
 data:
   dbName: auth_service
+  BASE_URL_FE: https://application.th1enlm02.live
 
 ---
 apiVersion: v1

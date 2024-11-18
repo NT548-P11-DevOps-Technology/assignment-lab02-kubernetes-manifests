@@ -1,0 +1,30 @@
+loki:
+  auth-enabled: false
+  commonConfig:
+    replication_factor: 3
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+  singleBinary:
+    enabled: true
+
+minio:
+  enabled: true
+
+deploymentMode: SingleBinary
+
+singleBinary:
+  replicas: 3
+
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0

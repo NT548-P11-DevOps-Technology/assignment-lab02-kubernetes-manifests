@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: loki-ingress
+  labels:
+    name: loki-ingress
+  annotations:
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "loki-basic-auth"
+spec:
+  rules:
+  - host: loki-cluster.th1enlm02.live
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: loki-gateway
+              port:
+                number: 80
